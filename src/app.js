@@ -40,6 +40,9 @@ server.addService(proto.table.TableService.service, {
   getAll: function(call, callback){
     tableHelper.getAll(call, callback);
   },
+  get: function(call, callback){
+    tableHelper.get(call, callback);
+  },
   create: function(call, callback){
     tableHelper.create(call,callback);
   },
@@ -48,6 +51,9 @@ server.addService(proto.table.TableService.service, {
   },
   delete: function(call, callback){
     tableHelper.delete(call, callback);
+  },
+  getOwner: function(call, callback){
+    tableHelper.getOwner(call, callback);
   }
 
 });

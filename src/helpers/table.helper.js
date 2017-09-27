@@ -37,6 +37,26 @@ table.getAll = function(call, callback){
   });
 }
 
+table.get = function(call, callback){
+  Table.findOne({_id: call.request._id}, function(err, table){
+    if(err){
+      console.log(err);
+      return callback({message:'err'}, null);
+    }
+
+    if(table){
+      console.log(table);
+      var formatted = {};
+      formatted._id = table._id.toString();
+      formatted.name = table.name;
+      formatted.owner = table.owner;
+      return callback(null, formatted);
+    }else{
+      return callback({message:'Table could not be found'},null);
+    }
+  })
+}
+
 table.create = function(call, callback){
   //validation handled by database
   var newTable = new Table(call.request);
@@ -82,6 +102,13 @@ console.log(call.request._id);
 
       return callback(null, {});
     })
+  });
+}
+
+table.getOwner = function(call, callback){
+  Table.findById(call.request._id, function(err, table){
+    if(err){return callback(err, null)}
+    callback(null,{_id:table.owner})
   });
 }
 
