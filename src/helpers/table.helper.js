@@ -58,14 +58,20 @@ table.get = function(call, callback){
 }
 
 table.create = function(call, callback){
-  //validation handled by database
-  var newTable = new Table(call.request);
-  newTable.save(function(err, result){
+  jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
     if(err){
-      console.log(err);
-      return callback({message:'err'},null);
+      return callback({message:err},null);
     }
-    return callback(null, {_id: result._id.toString()});
+    //validation handled by database
+    call.request.owner = token.sub;
+    var newTable = new Table(call.request);
+    newTable.save(function(err, result){
+      if(err){
+        console.log(err);
+        return callback({message:'err'},null);
+      }
+      return callback(null, {_id: result._id.toString()});
+    });
   });
 }
 
@@ -92,7 +98,6 @@ table.delete = function(call, callback){
     if(err){
       return callback({message:err},null);
     }
-console.log(call.request._id);
     Table.findByIdAndRemove(call.request._id, function(err, tableReply){
       if(err){
         console.log(err);

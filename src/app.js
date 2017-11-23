@@ -6,8 +6,7 @@ const tableHelper = require('./helpers/table.helper.js');
 const proto = grpc.load(__dirname + '/proto/table.proto');
 const server = new grpc.Server();
 const mongoose = require('mongoose');
-const dbUrl = "mongodb://wildappsadminmwtable:twPhDKwNqcSLnhmw@clustertable-shard-00-00-i4cam.mongodb.net:27017,clustertable-shard-00-01-i4cam.mongodb.net:27017,clustertable-shard-00-02-i4cam.mongodb.net:27017/TABLE?ssl=true&replicaSet=ClusterTable-shard-0&authSource=admin";
-
+const dbUrl = "mongodb://" + process.env.DB_USER + ":" + process.env.DB_PASS + "@" + process.env.DB_HOST;
 mongoose.connect(dbUrl);
 
 // CONNECTION EVENTS
@@ -64,3 +63,10 @@ server.bind('0.0.0.0:50051', grpc.ServerCredentials.createInsecure());
 //Start the server
 server.start();
 console.log('gRPC server running on port: 50051');
+
+process.on('SIGTERM', function onSigterm () {
+  console.info('Got SIGTERM. Graceful shutdown start', new Date().toISOString())
+  server.tryShutdown(()=>{
+    process.exit(1);
+  })
+});
