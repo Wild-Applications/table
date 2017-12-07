@@ -1,0 +1,9 @@
+{
+  "0001": {"message": "Invalid permissions", "code": 401},
+  "0002": {"message": "Failed to connect to the database", "code": 500},
+  "0003": {"message": "Unable to get tables", "code": 500},
+  "0004": {"message": "Unable to create new table", "code": 500},
+  "0005": {"message": "Unable to update table", "code":500},
+  "0006": {"message": "Unable to delete table", "code": 500},
+  "0007": {"message": "Table doesn't exist", "code": 404}
+}

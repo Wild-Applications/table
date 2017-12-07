@@ -16,12 +16,11 @@ table.getAll = function(call, callback){
   //protected route so verify token;
   jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
     if(err){
-      return callback({message:err},null);
+      return callback(errors['0001'],null);
     }
-    Table.find({ owner: token.sub}, function(err, resultTables){
+    Table.find({owner: token.sub}, function(err, resultTables){
       if(err){
-        console.log(err);
-        return callback({message:'err'}, null);
+        return callback(errors['0003'], null);
       }
 
       var results = [];
@@ -40,19 +39,17 @@ table.getAll = function(call, callback){
 table.get = function(call, callback){
   Table.findOne({_id: call.request._id}, function(err, table){
     if(err){
-      console.log(err);
-      return callback({message:'err'}, null);
+      return callback(errors['0003'], null);
     }
 
     if(table){
-      console.log(table);
       var formatted = {};
       formatted._id = table._id.toString();
       formatted.name = table.name;
       formatted.owner = table.owner;
       return callback(null, formatted);
     }else{
-      return callback({message:'Table could not be found'},null);
+      return callback(errors['0007'],null);
     }
   })
 }
@@ -60,15 +57,14 @@ table.get = function(call, callback){
 table.create = function(call, callback){
   jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
     if(err){
-      return callback({message:err},null);
+      return callback(errors['0001'],null);
     }
     //validation handled by database
     call.request.owner = token.sub;
     var newTable = new Table(call.request);
     newTable.save(function(err, result){
       if(err){
-        console.log(err);
-        return callback({message:'err'},null);
+        return callback(errors['0004'],null);
       }
       return callback(null, {_id: result._id.toString()});
     });
@@ -78,13 +74,13 @@ table.create = function(call, callback){
 table.update = function(call, callback){
   jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
     if(err){
-      return callback({message:err},null);
+      return callback(errors['0001'],null);
     }
 
     Table.findOneAndUpdate({ _id: call.request._id}, call.request, function(err, tableReply){
       if(err){
         console.log(err);
-        return callback({message:'err'}, null);
+        return callback(errors['0005'], null);
       }
       var tableToReturn = {};
       tableToReturn._id = tableReply._id.toString();
@@ -96,13 +92,11 @@ table.update = function(call, callback){
 table.delete = function(call, callback){
   jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
     if(err){
-      return callback({message:err},null);
+      return callback(errors['0001'],null);
     }
     Table.findByIdAndRemove(call.request._id, function(err, tableReply){
       if(err){
-        console.log(err);
-
-        return callback({message:'err'}, null);
+        return callback(errors['0006'], null);
       }
 
       return callback(null, {});
@@ -112,7 +106,7 @@ table.delete = function(call, callback){
 
 table.getOwner = function(call, callback){
   Table.findById(call.request._id, function(err, table){
-    if(err){return callback(err, null)}
+    if(err){return callback(errors['0003'], null)}
     callback(null,{_id:table.owner})
   });
 }
