@@ -51,6 +51,9 @@ server.addService(proto.table.TableService.service, {
   delete: function(call, callback){
     tableHelper.delete(call, callback);
   },
+  deleteAll: function(call, callback){
+    tableHelper.deleteAll(call, callback);
+  },
   getOwner: function(call, callback){
     tableHelper.getOwner(call, callback);
   }

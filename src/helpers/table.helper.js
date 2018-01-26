@@ -105,6 +105,21 @@ table.delete = function(call, callback){
   });
 }
 
+table.deleteAll = function(call, callback){
+  jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
+    if(err){
+      return callback(errors['0001'],null);
+    }
+    Table.remove({owner: token.sub}, function(err, reply){
+      if(err){
+        return callback(errors['0006'], null);
+      }
+
+      return callback(null, {});
+    })
+  });
+};
+
 table.getOwner = function(call, callback){
   Table.findById(call.request._id, function(err, table){
     if(err){return callback(errors['0003'], null)}
