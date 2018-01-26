@@ -3,7 +3,8 @@
 
 //imports
 var jwt = require('jsonwebtoken'),
-Table = require('../models/table.schema.js');
+Table = require('../models/table.schema.js'),
+errors = require('../errors/errors.json');
 
 
 
